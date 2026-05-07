@@ -6,11 +6,17 @@ import pytesseract
 from PIL import Image
 from flask import Flask, request, render_template, jsonify
 
+# Caminho do Tesseract no Render (Ubuntu/Debian)
+pytesseract.pytesseract.tesseract_cmd = "/usr/bin/tesseract"
+
 app = Flask(__name__)
 
 # Pré-aquece o Tesseract na inicialização
-_img_vazio = Image.new("RGB", (10, 10), color="white")
-pytesseract.image_to_string(_img_vazio, lang="por+eng")
+try:
+    _img_vazio = Image.new("RGB", (10, 10), color="white")
+    pytesseract.image_to_string(_img_vazio, lang="por+eng")
+except Exception:
+    pass
 
 @app.route("/")
 def index():
