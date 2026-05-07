@@ -1,6 +1,3 @@
-flask
-gunicorn
-opencv-python-headless
-pytesseract
-numpy
+python-bidi==0.4.2
+easyocr
 Pillow
