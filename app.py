@@ -3,7 +3,9 @@ import easyocr
 import os
 
 app = Flask(__name__)
-reader = easyocr.Reader(['pt', 'en'])
+
+# Fix 1: store models in /tmp to avoid permission errors
+reader = easyocr.Reader(['pt', 'en'], model_storage_directory='/tmp/easyocr')
 
 @app.route('/')
 def index():
@@ -12,7 +14,9 @@ def index():
 @app.route('/ocr', methods=['POST'])
 def ocr():
     file = request.files['image']
-    path = f"temp_{file.filename}"
+    
+    # Fix 2: save temp files in /tmp
+    path = f"/tmp/{file.filename}"
     file.save(path)
 
     result = reader.readtext(path)
@@ -22,4 +26,6 @@ def ocr():
     return jsonify({'text': text})
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Fix 3: use Render's PORT and host 0.0.0.0
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
