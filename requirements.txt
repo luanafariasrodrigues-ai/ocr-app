@@ -1,3 +1,5 @@
 python-bidi==0.4.2
 easyocr
 Pillow
+Flask
+gunicorn
