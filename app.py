@@ -1,22 +1,11 @@
 from flask import Flask, request, jsonify, render_template
-import easyocr
-import os
+import google.generativeai as genai
 from PIL import Image
+import os
 
 app = Flask(__name__)
-
-_reader = None
-
-def get_reader():
-    global _reader
-    if _reader is None:
-        _reader = easyocr.Reader(
-            ['pt', 'en'],
-            model_storage_directory='/tmp/easyocr',
-            gpu=False,
-            verbose=False
-        )
-    return _reader
+genai.configure(api_key=os.environ.get('GEMINI_API_KEY'))
+model = genai.GenerativeModel('gemini-1.5-flash')
 
 @app.route('/')
 def index():
@@ -26,22 +15,11 @@ def index():
 def ocr():
     try:
         file = request.files['image']
-        path = f"/tmp/{file.filename}"
-        file.save(path)
-
-        img = Image.open(path)
-        img.thumbnail((1200, 1200))
-        img.save(path)
-
-        reader = get_reader()
-        result = reader.readtext(path, detail=0)
-        text = '\n'.join(result)
-
-        os.remove(path)
-        return jsonify({'text': text})
-
+        image = Image.open(file)
+        response = model.generate_content(["Extract all text from this image:", image])
+        return jsonify({'text': response.text})
     except Exception as e:
-        print(f"OCR ERROR: {e}")
+        print(f"ERROR: {e}")
         return jsonify({'text': f'Error: {str(e)}'}), 500
 
 if __name__ == '__main__':
