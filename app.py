@@ -8,9 +8,6 @@ app = Flask(__name__)
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-# caminho do tesseract (ajusta se precisar)
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
-
 
 @app.route("/")
 def home():
@@ -27,13 +24,11 @@ def upload():
     path = os.path.join(UPLOAD_FOLDER, file.filename)
     file.save(path)
 
-    # processa imagem
     img = Image.open(path)
     img = ImageEnhance.Contrast(img).enhance(2)
     img = img.convert("L")
 
-    # OCR
-    text = pytesseract.image_to_string(img, lang="por")
+    text = pytesseract.image_to_string(img)
 
     return f"<pre>{text}</pre>"
 
