@@ -1,5 +1,4 @@
 flask
-pillow
-easyocr
-torch
-torchvision
+opencv-python-headless
+pytesseract
+numpy
