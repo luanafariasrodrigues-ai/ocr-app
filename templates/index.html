@@ -128,6 +128,12 @@
             min-height: 80px;
         }
 
+        .result-text.error {
+            color: #dc2626;
+            background: #fef2f2;
+            border-color: #fecaca;
+        }
+
         .copy-btn {
             margin-top: 12px;
             background: #e0e7ff;
@@ -227,6 +233,7 @@
             loader.style.display = 'block';
             readBtn.disabled = true;
             resultBox.style.display = 'none';
+            resultText.classList.remove('error');
 
             try {
                 const response = await fetch('/ocr', {
@@ -236,10 +243,18 @@
 
                 const data = await response.json();
 
-                resultText.textContent = data.text || 'No text found.';
+                if (!response.ok) {
+                    resultText.textContent = `Server error: ${data.text}`;
+                    resultText.classList.add('error');
+                } else {
+                    resultText.textContent = data.text || 'No text found.';
+                }
+
                 resultBox.style.display = 'block';
+
             } catch (err) {
-                resultText.textContent = 'Error processing image. Please try again.';
+                resultText.textContent = `Connection error: ${err.message}`;
+                resultText.classList.add('error');
                 resultBox.style.display = 'block';
             } finally {
                 loader.style.display = 'none';
@@ -255,4 +270,3 @@
 
 </body>
 </html>
-
