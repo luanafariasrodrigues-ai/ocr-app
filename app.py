@@ -1,10 +1,16 @@
 import os
+import io
 import cv2
-import pytesseract
 import numpy as np
+import pytesseract
+from PIL import Image
 from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
+
+# Pré-aquece o Tesseract na inicialização
+_img_vazio = Image.new("RGB", (10, 10), color="white")
+pytesseract.image_to_string(_img_vazio, lang="por+eng")
 
 @app.route("/")
 def index():
