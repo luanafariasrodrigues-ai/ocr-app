@@ -11,10 +11,10 @@ def get_reader():
     global _reader
     if _reader is None:
         _reader = easyocr.Reader(
-            ['en'],                              # only English = smaller model
+            ['pt', 'en'],
             model_storage_directory='/tmp/easyocr',
             gpu=False,
-            verbose=False                        # no progress logs
+            verbose=False
         )
     return _reader
 
@@ -29,25 +29,15 @@ def ocr():
         path = f"/tmp/{file.filename}"
         file.save(path)
 
-        # Resize image before OCR = much faster
         img = Image.open(path)
         img.thumbnail((1200, 1200))
         img.save(path)
 
         reader = get_reader()
-        result = reader.readtext(path, detail=0)  # detail=0 = only text, faster
+        result = reader.readtext(path, detail=0)
         text = '\n'.join(result)
 
         os.remove(path)
-        return jsonify({'text': text})
-
-    except Exception as e:
-        print(f"OCR ERROR: {e}")
-        return jsonify({'text': f'Error: {str(e)}'}), 500
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
         return jsonify({'text': text})
 
     except Exception as e:
