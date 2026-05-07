@@ -1,7 +1,8 @@
-from flask import Flask, request, render_template, jsonify
+import os
 import cv2
 import pytesseract
 import numpy as np
+from flask import Flask, request, render_template, jsonify
 
 app = Flask(__name__)
 
@@ -25,8 +26,6 @@ def ocr():
     texto = pytesseract.image_to_string(thresh, lang=lang)
 
     return jsonify({"texto": texto.strip()})
-
-import os
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
