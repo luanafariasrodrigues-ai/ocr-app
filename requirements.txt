@@ -1,5 +1,4 @@
-python-bidi>=0.6.0
-easyocr
-Pillow
 Flask
 gunicorn
+google-generativeai
+Pillow
